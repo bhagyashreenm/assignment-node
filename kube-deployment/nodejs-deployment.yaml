@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+    spec:
+      containers:
+        - name: nodejs-container
+          image: asia-south1-docker.pkg.dev/niveustraining/bhagyashree-assignment/app  
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DATABASE_HOST
+              value: "mongo-service"
+            - name: PORT
+              value: "3000"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-service
+spec:
+  selector:
+    app: nodejs-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer # Change this to NodePort or ClusterIP as needed
+z
